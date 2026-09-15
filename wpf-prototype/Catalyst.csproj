@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Catalyst</RootNamespace>
+    <AssemblyName>Catalyst</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Assets\Catalyst.ico</ApplicationIcon>
+    <!-- ffmpeg build-time download (Task 1a). Set FetchFfmpeg=false for offline builds. -->
+    <FetchFfmpeg Condition="'$(FetchFfmpeg)' == ''">true</FetchFfmpeg>
+    <FfmpegZipUrl>https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip</FfmpegZipUrl>
+    <FfmpegExe>$(ProjectDir)$(OutputPath)ffmpeg\ffmpeg.exe</FfmpegExe>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Catalyst.ico" />
+  </ItemGroup>
+
+  <!-- Downloaded ffmpeg.exe lands in the output dir (gitignored, never committed). -->
+  <Target Name="EnsureFfmpeg" BeforeTargets="BeforeBuild" Condition="'$(FetchFfmpeg)' == 'true' And !Exists('$(FfmpegExe)')">
+    <Message Text="Downloading ffmpeg essentials build (first build only; cached in output)..." Importance="high" />
+    <Exec Command="powershell -NoProfile -ExecutionPolicy Bypass -File &quot;$(ProjectDir)tools\FetchFfmpeg.ps1&quot; -ZipUrl &quot;$(FfmpegZipUrl)&quot; -DestinationExe &quot;$(FfmpegExe)&quot;" />
+  </Target>
+
+   <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+  </ItemGroup>
+
+
+</Project>

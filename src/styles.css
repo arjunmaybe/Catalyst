@@ -1,0 +1,97 @@
+/* Catalyst widget: 260x260 transparent stage, atomic/blue theme. */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 260px;
+  height: 260px;
+  overflow: hidden;
+  background: transparent;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+#stage {
+  position: relative;
+  width: 260px;
+  height: 260px;
+}
+
+/* Nucleus: 92px circle centered at (130, 130). */
+#nucleus {
+  position: absolute;
+  left: 84px;
+  top: 84px;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: #185fa5;
+  border: 2px solid #0c447c;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#nucleus.active {
+  background: #378add;
+}
+
+#nucleus.error {
+  background: #a53232;
+  border-color: #7c1f1f;
+}
+
+#status {
+  color: #e6f1fb;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  pointer-events: none;
+  padding: 0 6px;
+  overflow: hidden;
+}
+
+/* Error text is longer than idle labels: shrink + wrap so up to ~4 lines
+   stay legible inside the 92px nucleus. Full message is on hover. */
+#status.error {
+  font-size: 11px;
+  line-height: 1.2;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Format nodes: 44px circles at ring slots around the nucleus. */
+.node {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #b5d4f4;
+  border: 1.5px solid #185fa5;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node.highlight {
+  background: #378add;
+}
+
+/* The `hidden` attribute must win over `.node`'s `display: flex` above —
+   otherwise the UA `[hidden] { display: none }` rule loses and the ring
+   renders permanently. */
+.node[hidden] {
+  display: none;
+}
+
+.node-label {
+  color: #042c53;
+  font-size: 10px;
+  font-weight: 500;
+  pointer-events: none;
+}

@@ -1,0 +1,33 @@
+# Node / Vite
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/
+
+# ffmpeg sidecar (downloaded at build time — never commit)
+src-tauri/binaries/
+ffmpeg/
+ffmpeg.exe
+*.zip
+
+# .NET / WPF prototype outputs (see wpf-prototype/)
+bin/
+obj/
+out/
+publish/
+
+# VS / Rider
+.vs/
+.idea/
+*.user
+*.suo
+*.userosscache
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
