@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Catalyst — Drop, pick, done.</title>
+    <meta
+      name="description"
+      content="Catalyst is a tiny Tauri desktop widget for fast local file conversion. Drop, pick, done."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="#" aria-label="Catalyst home">
+          <span class="brand-mark" aria-hidden="true">
+            <span class="brand-nucleus"></span>
+            <span class="brand-orbit"></span>
+          </span>
+          <span class="brand-name">Catalyst</span>
+        </a>
+        <nav class="header-nav" aria-label="Primary">
+          <a href="#how">How it works</a>
+          <a href="#formats">Formats</a>
+          <a
+            href="https://github.com/arjunmaybe/Catalyst"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+          <a
+            class="btn btn-small"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSe_awol_-3JI7Y2O6_AEkXAOZXc3ICopkmi0M4ArtV7ixzLBA/viewform?usp=publish-editor"
+            target="_blank"
+            rel="noopener"
+            >Join waitlist</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Tauri desktop app &bull; Windows &bull; Local-first</p>
+            <h1>Catalyst</h1>
+            <p class="tagline">Drop, pick, done.</p>
+            <p class="lede">
+              A tiny atomic widget that lives on your desktop. Drop a file onto the
+              nucleus, pick a format from the orbit, and your conversion is done —
+              fast, local, no uploads.
+            </p>
+            <div class="hero-actions">
+              <a
+                class="btn btn-primary"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSe_awol_-3JI7Y2O6_AEkXAOZXc3ICopkmi0M4ArtV7ixzLBA/viewform?usp=publish-editor"
+                target="_blank"
+                rel="noopener"
+                >Join the waitlist</a
+              >
+              <a
+                class="btn btn-ghost"
+                href="https://github.com/arjunmaybe/Catalyst"
+                target="_blank"
+                rel="noopener"
+                >View on GitHub</a
+              >
+            </div>
+            <p class="hero-note">Free during beta &bull; No account needed</p>
+          </div>
+
+          <div class="hero-visual">
+            <!-- Labeled placeholder: swap this box for a real screenshot/GIF later -->
+            <div class="demo-placeholder" role="img" aria-label="Demo placeholder: Catalyst drag-and-drop widget animation coming soon">
+              <div class="demo-atom" aria-hidden="true">
+                <span class="demo-nucleus">drop file</span>
+                <span class="demo-node demo-node-1">png</span>
+                <span class="demo-node demo-node-2">mp4</span>
+                <span class="demo-node demo-node-3">mp3</span>
+              </div>
+              <p class="demo-label">Demo placeholder</p>
+              <p class="demo-sub">Screenshot / GIF coming soon — drag-and-drop in action</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- What it does -->
+      <section class="section" id="how">
+        <div class="container">
+          <h2>What it does</h2>
+          <p class="section-sub">
+            Catalyst skips the browser tabs, upload queues, and sketchy converter sites.
+            It stays out of the way until you need it.
+          </p>
+          <div class="cards">
+            <article class="card">
+              <p class="card-step">01</p>
+              <h3>Drop</h3>
+              <p>Drag any supported image, video, or audio file onto the Catalyst nucleus on your desktop.</p>
+            </article>
+            <article class="card">
+              <p class="card-step">02</p>
+              <h3>Pick</h3>
+              <p>Valid target formats orbit out around the file. Hover and pick the one you want.</p>
+            </article>
+            <article class="card">
+              <p class="card-step">03</p>
+              <h3>Done</h3>
+              <p>Conversion runs locally and the finished file lands next to your original. That's it.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Supported formats -->
+      <section class="section section-alt" id="formats">
+        <div class="container">
+          <h2>Supported formats</h2>
+          <p class="section-sub">One widget for the formats you convert most.</p>
+          <div class="cards format-cards">
+            <article class="card">
+              <h3>Images</h3>
+              <ul class="pills">
+                <li>JPG</li>
+                <li>PNG</li>
+                <li>BMP</li>
+                <li>GIF</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3>Video</h3>
+              <ul class="pills">
+                <li>MP4</li>
+                <li>MKV</li>
+                <li>MOV</li>
+                <li>WEBM</li>
+              </ul>
+            </article>
+            <article class="card">
+              <h3>Audio</h3>
+              <ul class="pills">
+                <li>MP3</li>
+                <li>WAV</li>
+                <li>M4A</li>
+                <li>FLAC</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Waitlist CTA -->
+      <section class="section cta-section">
+        <div class="container">
+          <div class="cta-panel">
+            <h2>Get Catalyst first</h2>
+            <p>Join the waitlist and we'll ping you when the beta is ready to download.</p>
+            <a
+              class="btn btn-primary btn-large"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSe_awol_-3JI7Y2O6_AEkXAOZXc3ICopkmi0M4ArtV7ixzLBA/viewform?usp=publish-editor"
+              target="_blank"
+              rel="noopener"
+              >Join the waitlist</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>Made by Arjun Sasi</p>
+        <a
+          href="https://github.com/arjunmaybe/Catalyst"
+          target="_blank"
+          rel="noopener"
+          >github.com/arjunmaybe/Catalyst</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>
