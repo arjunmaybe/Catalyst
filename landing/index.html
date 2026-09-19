@@ -6,166 +6,395 @@
     <title>Catalyst — Drop, pick, done.</title>
     <meta
       name="description"
-      content="Catalyst is a tiny Tauri desktop widget for fast local file conversion. Drop, pick, done."
+      content="Catalyst is a tiny floating widget for your desktop. Drop a file onto the nucleus, pick a format from the ring, and you're done — all offline on your PC."
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="#" aria-label="Catalyst home">
+        <a class="brand" href="#top" aria-label="Catalyst home">
           <span class="brand-mark" aria-hidden="true">
             <span class="brand-nucleus"></span>
-            <span class="brand-orbit"></span>
+            <span class="brand-ring"></span>
           </span>
           <span class="brand-name">Catalyst</span>
         </a>
         <nav class="header-nav" aria-label="Primary">
-          <a href="#how">How it works</a>
-          <a href="#formats">Formats</a>
+          <a class="nav-link" href="#features">Features</a>
+          <a class="nav-link" href="#waitlist">Pricing</a>
           <a
-            href="https://github.com/arjunmaybe/Catalyst"
-            target="_blank"
-            rel="noopener"
-            >GitHub</a
-          >
-          <a
-            class="btn btn-small"
+            class="btn btn-primary btn-small"
             href="https://docs.google.com/forms/d/e/1FAIpQLSe_awol_-3JI7Y2O6_AEkXAOZXc3ICopkmi0M4ArtV7ixzLBA/viewform?usp=publish-editor"
             target="_blank"
             rel="noopener"
-            >Join waitlist</a
+            >Join Waitlist <span aria-hidden="true">↗</span></a
           >
         </nav>
       </div>
     </header>
 
-    <main>
+    <main id="top">
       <!-- Hero -->
       <section class="hero">
-        <div class="container hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">Tauri desktop app &bull; Windows &bull; Local-first</p>
-            <h1>Catalyst</h1>
-            <p class="tagline">Drop, pick, done.</p>
-            <p class="lede">
-              A tiny atomic widget that lives on your desktop. Drop a file onto the
-              nucleus, pick a format from the orbit, and your conversion is done —
-              fast, local, no uploads.
-            </p>
-            <div class="hero-actions">
-              <a
-                class="btn btn-primary"
-                href="https://docs.google.com/forms/d/e/1FAIpQLSe_awol_-3JI7Y2O6_AEkXAOZXc3ICopkmi0M4ArtV7ixzLBA/viewform?usp=publish-editor"
-                target="_blank"
-                rel="noopener"
-                >Join the waitlist</a
-              >
-              <a
-                class="btn btn-ghost"
-                href="https://github.com/arjunmaybe/Catalyst"
-                target="_blank"
-                rel="noopener"
-                >View on GitHub</a
-              >
-            </div>
-            <p class="hero-note">Free during beta &bull; No account needed</p>
-          </div>
-
-          <div class="hero-visual">
-            <!-- Labeled placeholder: swap this box for a real screenshot/GIF later -->
-            <div class="demo-placeholder" role="img" aria-label="Demo placeholder: Catalyst drag-and-drop widget animation coming soon">
-              <div class="demo-atom" aria-hidden="true">
-                <span class="demo-nucleus">drop file</span>
-                <span class="demo-node demo-node-1">png</span>
-                <span class="demo-node demo-node-2">mp4</span>
-                <span class="demo-node demo-node-3">mp3</span>
-              </div>
-              <p class="demo-label">Demo placeholder</p>
-              <p class="demo-sub">Screenshot / GIF coming soon — drag-and-drop in action</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- What it does -->
-      <section class="section" id="how">
-        <div class="container">
-          <h2>What it does</h2>
-          <p class="section-sub">
-            Catalyst skips the browser tabs, upload queues, and sketchy converter sites.
-            It stays out of the way until you need it.
+        <div class="container hero-inner">
+          <p class="eyebrow">Windows &bull; Local-first &bull; No uploads</p>
+          <h1>Drop, pick, done.</h1>
+          <p class="lede">
+            Catalyst is a tiny floating widget for your desktop. Drag a file
+            onto the nucleus, pick a format from the ring, and you&rsquo;re
+            done &mdash; all offline on your PC.
           </p>
-          <div class="cards">
-            <article class="card">
-              <p class="card-step">01</p>
+          <div class="hero-actions">
+            <a
+              class="btn btn-primary"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSe_awol_-3JI7Y2O6_AEkXAOZXc3ICopkmi0M4ArtV7ixzLBA/viewform?usp=publish-editor"
+              target="_blank"
+              rel="noopener"
+              >Join Waitlist <span aria-hidden="true">↗</span></a
+            >
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/arjunmaybe/Catalyst"
+              target="_blank"
+              rel="noopener"
+              >View on GitHub</a
+            >
+          </div>
+
+          <!-- Clearly labeled placeholder: not a fake player, no play button -->
+          <div
+            class="demo-placeholder"
+            role="img"
+            aria-label="Demo video placeholder: a real screen recording of Catalyst converting a file will go here"
+          >
+            <p class="demo-placeholder-title">Demo video placeholder</p>
+            <p class="demo-placeholder-sub">
+              Real screen recording coming soon &mdash; 16:9 video or GIF of a
+              drag &rarr; pick &rarr; convert will live here.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How it works + real mechanic mock -->
+      <section class="section" id="features">
+        <div class="container">
+          <h2>How it works</h2>
+          <p class="section-sub">
+            No browser tabs, no upload queues, no converter sites. Catalyst
+            stays out of the way until you need it.
+          </p>
+
+          <div class="steps">
+            <article class="card step">
+              <p class="step-num">01</p>
               <h3>Drop</h3>
-              <p>Drag any supported image, video, or audio file onto the Catalyst nucleus on your desktop.</p>
+              <p>
+                Drag a supported image, video, or audio file onto the floating
+                nucleus.
+              </p>
             </article>
-            <article class="card">
-              <p class="card-step">02</p>
+            <article class="card step">
+              <p class="step-num">02</p>
               <h3>Pick</h3>
-              <p>Valid target formats orbit out around the file. Hover and pick the one you want.</p>
+              <p>
+                Valid target formats appear in a ring. The node nearest your
+                cursor highlights.
+              </p>
             </article>
-            <article class="card">
-              <p class="card-step">03</p>
+            <article class="card step">
+              <p class="step-num">03</p>
               <h3>Done</h3>
-              <p>Conversion runs locally and the finished file lands next to your original. That's it.</p>
+              <p>
+                Drop to convert locally. The finished file lands next to your
+                original.
+              </p>
+            </article>
+          </div>
+
+          <!-- Static mock of OUR actual UI: nucleus + ring nodes -->
+          <div class="mechanic">
+            <div class="mechanic-visual" aria-hidden="true">
+              <div class="stage">
+                <span class="ring-node node-top is-highlight">PNG</span>
+                <span class="ring-node node-right">BMP</span>
+                <span class="ring-node node-bottom">GIF</span>
+                <span class="ring-node node-left is-empty" title=""
+                  >JPG</span
+                >
+                <div class="stage-nucleus">
+                  <span class="stage-file">photo.jpg</span>
+                  <span class="stage-status">pick a format</span>
+                </div>
+                <span class="stage-cursor"></span>
+              </div>
+            </div>
+            <div class="mechanic-copy">
+              <h3>Our actual interaction, illustrated</h3>
+              <p>
+                This mock mirrors the real widget: a floating circular nucleus
+                with format nodes appearing in a ring during a drag. Here a
+                <code>photo.jpg</code> is over the nucleus, so the ring offers
+                <strong>PNG, BMP, GIF</strong> &mdash; JPG is excluded because
+                it&rsquo;s already the source format.
+              </p>
+              <p class="mechanic-note">
+                Static illustration for now. The shipped widget highlights the
+                node nearest your cursor as you move.
+              </p>
+            </div>
+          </div>
+
+          <!-- Honest stat cards -->
+          <div class="stats">
+            <article class="card stat">
+              <p class="stat-num">12</p>
+              <h3>Output formats</h3>
+              <p>
+                4 image &bull; 4 video &bull; 4 audio targets. Nothing else
+                claimed.
+              </p>
+            </article>
+            <article class="card stat">
+              <p class="stat-num">3</p>
+              <h3>File types</h3>
+              <p>Images, video, and audio. No documents, no archives.</p>
             </article>
           </div>
         </div>
       </section>
 
-      <!-- Supported formats -->
-      <section class="section section-alt" id="formats">
+      <!-- Segmented tabs: one category at a time -->
+      <section class="section section-alt" id="categories">
         <div class="container">
-          <h2>Supported formats</h2>
-          <p class="section-sub">One widget for the formats you convert most.</p>
-          <div class="cards format-cards">
-            <article class="card">
-              <h3>Images</h3>
+          <h2>One widget, three kinds of files</h2>
+          <p class="section-sub">
+            Pick a category to see exactly what Catalyst converts to.
+          </p>
+
+          <div class="tabs" role="tablist" aria-label="File categories">
+            <button
+              class="tab is-active"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-images"
+              id="tab-images"
+              data-tab="images"
+              type="button"
+            >
+              Images
+            </button>
+            <button
+              class="tab"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-video"
+              id="tab-video"
+              data-tab="video"
+              type="button"
+              tabindex="-1"
+            >
+              Video
+            </button>
+            <button
+              class="tab"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-audio"
+              id="tab-audio"
+              data-tab="audio"
+              type="button"
+              tabindex="-1"
+            >
+              Audio
+            </button>
+          </div>
+
+          <div class="tab-panels card">
+            <div
+              class="tab-panel is-active"
+              id="panel-images"
+              role="tabpanel"
+              aria-labelledby="tab-images"
+            >
+              <h3>Images &rarr; JPG, PNG, BMP, GIF</h3>
+              <p>
+                Reads JPG / JPEG, PNG, BMP, GIF, TIFF. Converts locally with
+                the Rust <code>image</code> crate.
+              </p>
               <ul class="pills">
                 <li>JPG</li>
                 <li>PNG</li>
                 <li>BMP</li>
                 <li>GIF</li>
               </ul>
-            </article>
-            <article class="card">
-              <h3>Video</h3>
+            </div>
+            <div
+              class="tab-panel"
+              id="panel-video"
+              role="tabpanel"
+              aria-labelledby="tab-video"
+              hidden
+            >
+              <h3>Video &rarr; MP4, MKV, MOV, WEBM</h3>
+              <p>
+                Reads MP4, MKV, MOV, AVI, WEBM. Converts locally through a
+                bundled ffmpeg binary.
+              </p>
               <ul class="pills">
                 <li>MP4</li>
                 <li>MKV</li>
                 <li>MOV</li>
                 <li>WEBM</li>
               </ul>
-            </article>
-            <article class="card">
-              <h3>Audio</h3>
+            </div>
+            <div
+              class="tab-panel"
+              id="panel-audio"
+              role="tabpanel"
+              aria-labelledby="tab-audio"
+              hidden
+            >
+              <h3>Audio &rarr; MP3, WAV, M4A, FLAC</h3>
+              <p>
+                Reads MP3, WAV, M4A, FLAC, OGG. Converts locally through a
+                bundled ffmpeg binary.
+              </p>
               <ul class="pills">
                 <li>MP3</li>
                 <li>WAV</li>
                 <li>M4A</li>
                 <li>FLAC</li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Supported formats table -->
+      <section class="section" id="formats">
+        <div class="container">
+          <h2>Supported formats</h2>
+          <p class="section-sub">
+            Only what Catalyst actually converts to today. JPEG files save as
+            JPG.
+          </p>
+          <div class="format-table card">
+            <div class="format-row">
+              <p class="format-label">Images</p>
+              <ul class="pills">
+                <li>JPG</li>
+                <li>PNG</li>
+                <li>BMP</li>
+                <li>GIF</li>
+              </ul>
+            </div>
+            <div class="format-row">
+              <p class="format-label">Video</p>
+              <ul class="pills">
+                <li>MP4</li>
+                <li>MKV</li>
+                <li>MOV</li>
+                <li>WEBM</li>
+              </ul>
+            </div>
+            <div class="format-row">
+              <p class="format-label">Audio</p>
+              <ul class="pills">
+                <li>MP3</li>
+                <li>WAV</li>
+                <li>M4A</li>
+                <li>FLAC</li>
+              </ul>
+            </div>
+          </div>
+          <p class="fine-print">
+            Catalyst does format conversion only &mdash; no compress, crop,
+            trim, redact, metadata, collage, or PDF tools.
+          </p>
+        </div>
+      </section>
+
+      <!-- Privacy -->
+      <section class="section section-alt" id="privacy">
+        <div class="container">
+          <p class="eyebrow">Privacy</p>
+          <h2>Your files stay on your PC.</h2>
+          <p class="section-sub">
+            Conversion runs locally &mdash; images through the Rust
+            <code>image</code> crate, video and audio through a bundled ffmpeg
+            binary. Nothing is uploaded anywhere.
+          </p>
+          <div class="privacy-grid">
+            <article class="card privacy-card">
+              <p class="privacy-icon" aria-hidden="true">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 19V5" />
+                  <path d="m5 12 7-7 7 7" />
+                </svg>
+              </p>
+              <h3>Uploading adds risk</h3>
+              <p>
+                Online converters make you upload a copy of your file, so you
+                have to trust how another service stores, processes, and
+                deletes it.
+              </p>
+            </article>
+            <article class="card privacy-card">
+              <p class="privacy-icon" aria-hidden="true">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="11" width="18" height="10" rx="2" />
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+              </p>
+              <h3>Catalyst works locally</h3>
+              <p>
+                Everything converts on your own PC. Your files are never sent
+                to us or anyone else.
+              </p>
             </article>
           </div>
         </div>
       </section>
 
-      <!-- Waitlist CTA -->
-      <section class="section cta-section">
+      <!-- Waitlist (pricing anchor without claiming a price) -->
+      <section class="section" id="waitlist">
         <div class="container">
-          <div class="cta-panel">
-            <h2>Get Catalyst first</h2>
-            <p>Join the waitlist and we'll ping you when the beta is ready to download.</p>
+          <div class="waitlist-card">
+            <p class="eyebrow">Pricing</p>
+            <h2>Join the waitlist</h2>
+            <p>
+              We haven&rsquo;t set a price or built checkout yet. Join the
+              waitlist and we&rsquo;ll notify you at launch &mdash; free during
+              beta, no account needed.
+            </p>
             <a
               class="btn btn-primary btn-large"
               href="https://docs.google.com/forms/d/e/1FAIpQLSe_awol_-3JI7Y2O6_AEkXAOZXc3ICopkmi0M4ArtV7ixzLBA/viewform?usp=publish-editor"
               target="_blank"
               rel="noopener"
-              >Join the waitlist</a
+              >Join the waitlist <span aria-hidden="true">↗</span></a
             >
+            <p class="fine-print">One email at launch. No spam, no account.</p>
           </div>
         </div>
       </section>
@@ -173,14 +402,88 @@
 
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p>Made by Arjun Sasi</p>
-        <a
-          href="https://github.com/arjunmaybe/Catalyst"
-          target="_blank"
-          rel="noopener"
-          >github.com/arjunmaybe/Catalyst</a
-        >
+        <a class="brand brand-small" href="#top" aria-label="Catalyst home">
+          <span class="brand-mark" aria-hidden="true">
+            <span class="brand-nucleus"></span>
+            <span class="brand-ring"></span>
+          </span>
+          <span class="brand-name">Catalyst</span>
+        </a>
+        <nav class="footer-nav" aria-label="Footer">
+          <a
+            class="btn btn-outline btn-small"
+            href="https://github.com/arjunmaybe/Catalyst/issues"
+            target="_blank"
+            rel="noopener"
+            >Contact support</a
+          >
+          <a
+            class="btn btn-outline btn-small"
+            href="https://github.com/arjunmaybe/Catalyst/issues/new"
+            target="_blank"
+            rel="noopener"
+            >Request feature</a
+          >
+        </nav>
+      </div>
+      <div class="container footer-meta">
+        <p>
+          Support and feature requests are handled on GitHub for now &mdash;
+          no helpdesk yet.
+        </p>
       </div>
     </footer>
+
+    <script>
+      // Segmented tabs: Images / Video / Audio. Plain vanilla JS, no framework.
+      (function () {
+        var tabs = Array.prototype.slice.call(
+          document.querySelectorAll('[role="tab"]')
+        );
+        var panels = {
+          images: document.getElementById("panel-images"),
+          video: document.getElementById("panel-video"),
+          audio: document.getElementById("panel-audio"),
+        };
+        function select(name) {
+          tabs.forEach(function (tab) {
+            var active = tab.dataset.tab === name;
+            tab.classList.toggle("is-active", active);
+            tab.setAttribute("aria-selected", active ? "true" : "false");
+            tab.tabIndex = active ? 0 : -1;
+          });
+          Object.keys(panels).forEach(function (key) {
+            var panel = panels[key];
+            if (!panel) return;
+            var active = key === name;
+            panel.classList.toggle("is-active", active);
+            if (active) {
+              panel.removeAttribute("hidden");
+            } else {
+              panel.setAttribute("hidden", "");
+            }
+          });
+        }
+        tabs.forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            select(tab.dataset.tab);
+          });
+          tab.addEventListener("keydown", function (e) {
+            var i = tabs.indexOf(tab);
+            if (e.key === "ArrowRight") {
+              e.preventDefault();
+              var next = tabs[(i + 1) % tabs.length];
+              next.focus();
+              select(next.dataset.tab);
+            } else if (e.key === "ArrowLeft") {
+              e.preventDefault();
+              var prev = tabs[(i - 1 + tabs.length) % tabs.length];
+              prev.focus();
+              select(prev.dataset.tab);
+            }
+          });
+        });
+      })();
+    </script>
   </body>
 </html>
