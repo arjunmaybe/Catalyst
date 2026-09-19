@@ -61,6 +61,10 @@ const SLOT_CENTERS: Array<{ x: number; y: number }> = [
   { x: 130, y: 220 }, // bottom
   { x: 40, y: 130 }, // left
 ];
+// Beam pointer angles (deg, 0 = top, clockwise) per SLOT_CENTERS index.
+// Slots are axis-aligned at radius 90, so these are exact — keep in sync
+// with SLOT_CENTERS above.
+const SLOT_ANGLES = [0, 90, 180, 270];
 const NODE_SIZE = 44;
 const RESET_DELAY_MS = 2000;
 const ERROR_RESET_DELAY_MS = 6000;
@@ -70,6 +74,9 @@ const ERROR_SHORT_MAX = 40;
 
 const nucleus = document.getElementById("nucleus") as HTMLDivElement;
 const statusEl = document.getElementById("status") as HTMLSpanElement;
+const nucleusIcon = document.getElementById("nucleus-icon") as HTMLSpanElement;
+const guideRing = document.getElementById("guide-ring") as HTMLDivElement;
+const guideBeam = document.getElementById("guide-beam") as HTMLDivElement;
 const nodeEls: HTMLDivElement[] = [0, 1, 2, 3].map(
   (i) => document.getElementById(`node-${i}`) as HTMLDivElement,
 );
@@ -78,6 +85,66 @@ let visibleTargets: string[] = [];
 let highlightedIndex = -1;
 let isConverting = false;
 let resetTimer: number | undefined;
+// Ring fade generation: guards the delayed `hidden = true` so a quick
+// re-enter can't be hidden by a stale fade-out timeout.
+let ringGeneration = 0;
+let hideTimer: number | undefined;
+const RING_FADE_MS = 180;
+
+const ICONS: Record<string, string> = {
+  image:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>',
+  video:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m10 9 5 3-5 3z"/></svg>',
+  audio:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+  check:
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>',
+};
+
+function categoryForFirstFile(paths: string[]): Category | null {
+  if (paths.length === 0) return null;
+  return categoryOf(extOf(paths[0]));
+}
+
+function setNucleusIcon(name: string | null): void {
+  if (name === null || !(name in ICONS)) {
+    nucleusIcon.innerHTML = "";
+    nucleusIcon.hidden = true;
+    return;
+  }
+  nucleusIcon.innerHTML = ICONS[name];
+  nucleusIcon.hidden = false;
+}
+
+// Continuous beam angle (deg, unwrapped): normalized to the shortest path
+// on every retarget so e.g. left (270°) → top (0°) sweeps forward 90°
+// instead of spinning back 270°.
+let beamAngleDeg = 0;
+
+function setBeamTarget(index: number): void {
+  if (index < 0) {
+    guideBeam.classList.remove("beam-on");
+    return;
+  }
+  let target = SLOT_ANGLES[index];
+  target += 360 * Math.round((beamAngleDeg - target) / 360);
+  beamAngleDeg = target;
+  guideBeam.style.setProperty("--beam-angle", `${target}deg`);
+  guideBeam.classList.add("beam-on");
+}
+
+function clearNucleusVisuals(): void {
+  nucleus.classList.remove("active", "deciding", "dragover", "success");
+  setNucleusIcon(null);
+}
+
+function showSuccess(text: string): void {
+  setStatus(text);
+  nucleus.classList.remove("deciding", "dragover", "error");
+  nucleus.classList.add("success");
+  setNucleusIcon("check");
+}
 
 for (let i = 0; i < nodeEls.length; i++) {
   const slot = SLOT_CENTERS[i];
@@ -149,11 +216,14 @@ function scheduleReset(delay: number = RESET_DELAY_MS): void {
   window.clearTimeout(resetTimer);
   resetTimer = window.setTimeout(() => {
     setStatus("drop file");
-    nucleus.classList.remove("active");
+    clearNucleusVisuals();
   }, delay);
 }
 
-function showTargets(candidates: string[]): void {
+function showTargets(candidates: string[], category: Category | null = null): void {
+  // Cancel any pending fade-out so a quick re-enter never gets hidden.
+  ringGeneration += 1;
+  window.clearTimeout(hideTimer);
   visibleTargets = candidates;
   highlightedIndex = -1;
   for (let i = 0; i < nodeEls.length; i++) {
@@ -162,25 +232,58 @@ function showTargets(candidates: string[]): void {
       label.textContent = candidates[i].slice(1).toUpperCase();
       nodeEls[i].hidden = false;
       nodeEls[i].classList.remove("highlight");
+      // Force layout so the .visible add below triggers the fade/scale
+      // transition instead of applying instantly.
+      void nodeEls[i].offsetWidth;
+      nodeEls[i].classList.add("visible");
     } else {
       nodeEls[i].hidden = true;
-      nodeEls[i].classList.remove("highlight");
+      nodeEls[i].classList.remove("highlight", "visible");
     }
   }
-  nucleus.classList.add("active");
+  nucleus.classList.add("active", "deciding", "dragover");
+  nucleus.classList.remove("success");
+  setNucleusIcon(category);
+  // Guide track + sweep: unhide, force layout so the fade runs, then show.
+  // Beam stays off until the first highlight (highlightedIndex is -1 here);
+  // snap its angle back to top while invisible.
+  guideRing.hidden = false;
+  void guideRing.offsetWidth;
+  guideRing.classList.add("visible");
+  guideBeam.classList.remove("beam-on");
+  beamAngleDeg = 0;
+  guideBeam.style.setProperty("--beam-angle", "0deg");
 }
 
 function hideNodes(): void {
   visibleTargets = [];
   highlightedIndex = -1;
+  const generation = ringGeneration + 1;
+  ringGeneration = generation;
   for (const el of nodeEls) {
-    el.hidden = true;
-    el.classList.remove("highlight");
-    // Clear stale labels too, so a wrongly-visible node can never show an
-    // outdated format (or an empty circle for an unused slot).
-    const label = el.querySelector(".node-label");
-    if (label) label.textContent = "";
+    // Fade out first; `hidden` is applied after the transition so the
+    // ring disappears smoothly instead of snapping away.
+    el.classList.remove("visible", "highlight");
   }
+  // Same fade treatment for the guide track/sweep, under the same
+  // generation guard so a fast re-enter can't strand it hidden.
+  guideRing.classList.remove("visible");
+  guideBeam.classList.remove("beam-on");
+  nucleus.classList.remove("deciding", "dragover");
+  setNucleusIcon(null);
+  window.clearTimeout(hideTimer);
+  hideTimer = window.setTimeout(() => {
+    if (ringGeneration !== generation) return;
+    guideRing.hidden = true;
+    for (const el of nodeEls) {
+      el.hidden = true;
+      el.classList.remove("highlight");
+      // Clear stale labels too, so a wrongly-visible node can never show an
+      // outdated format (or an empty circle for an unused slot).
+      const label = el.querySelector(".node-label");
+      if (label) label.textContent = "";
+    }
+  }, RING_FADE_MS);
 }
 
 function highlightNearest(cursor: { x: number; y: number }): void {
@@ -199,6 +302,7 @@ function highlightNearest(cursor: { x: number; y: number }): void {
   if (highlightedIndex >= 0) nodeEls[highlightedIndex].classList.remove("highlight");
   if (nearest >= 0) nodeEls[nearest].classList.add("highlight");
   highlightedIndex = nearest;
+  setBeamTarget(nearest);
 }
 
 // ---------------------------------------------------------------------------
@@ -273,7 +377,8 @@ async function convertDrop(paths: string[], targetExt: string): Promise<void> {
   nucleus.classList.remove("active");
   // Surface the backend error in the widget status so failures are visible
   // without devtools. Friendly label on the nucleus; full message stays on
-  // hover (nucleus.title) + console.
+  // hover (nucleus.title) + console. Green success shows on any conversion
+  // (pure or partial); error styling is reserved for zero conversions.
   if (converted > 0 && skipped > 0) {
     if (lastError !== null) {
       setStatus(
@@ -282,11 +387,11 @@ async function convertDrop(paths: string[], targetExt: string): Promise<void> {
       );
       scheduleReset(ERROR_RESET_DELAY_MS);
     } else {
-      setStatus(`done (${converted}), skipped (${skipped})`);
+      showSuccess(`done (${converted}), skipped (${skipped})`);
       scheduleReset();
     }
   } else if (converted > 0) {
-    setStatus(`done (${converted})`);
+    showSuccess(`done (${converted})`);
     scheduleReset();
   } else if (lastError !== null) {
     setStatus(`error: ${friendlyDisplayError(lastError, lastErrorFile)}`, lastError);
@@ -323,7 +428,7 @@ async function setupDragDrop(): Promise<void> {
         setStatus("unsupported");
         return;
       }
-      showTargets(candidates);
+      showTargets(candidates, categoryForFirstFile(payload.paths));
       setStatus("pick a format");
     } else if (payload.type === "over") {
       if (visibleTargets.length === 0) return;
@@ -342,13 +447,13 @@ async function setupDragDrop(): Promise<void> {
       hideNodes();
       if (candidates === null) {
         setStatus("unsupported");
-        nucleus.classList.remove("active");
+        clearNucleusVisuals();
         scheduleReset();
         return;
       }
       if (picked === null || !candidates.includes(picked)) {
         setStatus("no format");
-        nucleus.classList.remove("active");
+        clearNucleusVisuals();
         scheduleReset();
         return;
       }
@@ -357,7 +462,7 @@ async function setupDragDrop(): Promise<void> {
       // leave
       if (isConverting) return;
       hideNodes();
-      nucleus.classList.remove("active");
+      clearNucleusVisuals();
       setStatus("drop file");
     }
   });

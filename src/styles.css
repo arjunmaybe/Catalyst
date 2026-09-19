@@ -28,16 +28,53 @@ body {
   width: 92px;
   height: 92px;
   border-radius: 50%;
-  background: #185fa5;
+  background: linear-gradient(135deg, #185fa5 0%, #378add 100%);
   border: 2px solid #0c447c;
+  box-shadow: 0 4px 12px rgba(24, 95, 165, 0.3);
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
+  transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease,
+    border-color 180ms ease;
 }
 
 #nucleus.active {
-  background: #378add;
+  background: linear-gradient(135deg, #185fa5 0%, #378add 100%);
+  box-shadow: 0 4px 12px rgba(24, 95, 165, 0.3);
+}
+
+/* Drag-over: soft blurred glow pulse to signal an active drop target. */
+#nucleus.dragover {
+  box-shadow: 0 0 0 4px rgba(55, 138, 221, 0.35),
+    0 0 24px 6px rgba(55, 138, 221, 0.45), 0 4px 12px rgba(24, 95, 165, 0.3);
+  animation: nucleus-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes nucleus-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+/* Decision point: darker navy circle while the format ring is up. */
+#nucleus.deciding {
+  background: linear-gradient(135deg, #0c447c 0%, #185fa5 100%);
+  border-color: #082f57;
+  box-shadow: 0 4px 12px rgba(12, 68, 124, 0.45);
+}
+
+/* Success: green check, auto-cleared by the existing reset timer. */
+#nucleus.success {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  border-color: #14532d;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
 }
 
 #nucleus.error {
@@ -47,8 +84,10 @@ body {
 
 #status {
   color: #e6f1fb;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-align: center;
   pointer-events: none;
   padding: 0 6px;
@@ -60,8 +99,88 @@ body {
 #status.error {
   font-size: 11px;
   line-height: 1.2;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
   word-break: break-word;
   white-space: normal;
+}
+
+/* Small generic file-type / success icon above the status label. */
+.nucleus-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: #e6f1fb;
+  pointer-events: none;
+}
+
+.nucleus-icon[hidden] {
+  display: none;
+}
+
+.nucleus-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* Guide ring: faint Ø180 track through the node centers + rotating sweep. */
+#guide-ring {
+  position: absolute;
+  left: 40px;
+  top: 40px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(55, 138, 221, 0.25);
+  box-sizing: border-box;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease-out;
+}
+
+#guide-ring.visible {
+  opacity: 1;
+}
+
+#guide-ring[hidden] {
+  display: none;
+}
+
+#guide-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #378add 0deg,
+    rgba(55, 138, 221, 0) 35deg,
+    rgba(55, 138, 221, 0) 325deg,
+    #378add 360deg
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 5px),
+    #000 calc(100% - 4px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 5px),
+    #000 calc(100% - 4px)
+  );
+  filter: drop-shadow(0 0 6px rgba(55, 138, 221, 0.9));
+  opacity: 0;
+  transform: rotate(var(--beam-angle, 0deg));
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.3, 1),
+    opacity 150ms ease;
+  pointer-events: none;
+}
+
+#guide-beam.beam-on {
+  opacity: 1;
 }
 
 /* Format nodes: 44px circles at ring slots around the nucleus. */
@@ -70,16 +189,45 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #b5d4f4;
-  border: 1.5px solid #185fa5;
+  background: linear-gradient(135deg, #185fa5 0%, #378add 100%);
+  border: 1.5px solid #0c447c;
+  box-shadow: 0 2px 8px rgba(24, 95, 165, 0.3);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 180ms ease-out, transform 180ms ease-out,
+    background-color 130ms ease, box-shadow 130ms ease;
+  transition-delay: 0ms;
+}
+
+.node.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+#node-0.visible {
+  transition-delay: 0ms;
+}
+
+#node-1.visible {
+  transition-delay: 30ms;
+}
+
+#node-2.visible {
+  transition-delay: 60ms;
+}
+
+#node-3.visible {
+  transition-delay: 90ms;
 }
 
 .node.highlight {
-  background: #378add;
+  transform: scale(1.12);
+  box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.4),
+    0 2px 10px rgba(24, 95, 165, 0.45);
 }
 
 /* The `hidden` attribute must win over `.node`'s `display: flex` above —
@@ -90,8 +238,34 @@ body {
 }
 
 .node-label {
-  color: #042c53;
+  color: #e6f1fb;
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #nucleus.dragover {
+    animation: none;
+  }
+
+  #guide-beam {
+    display: none;
+    animation: none;
+  }
+
+  #guide-beam,
+  #guide-ring {
+    transition-duration: 1ms;
+  }
+
+  .node {
+    transition-duration: 1ms;
+  }
+
+  #nucleus {
+    transition-duration: 1ms;
+  }
 }

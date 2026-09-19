@@ -8,6 +8,9 @@
   </head>
   <body>
     <div id="stage">
+      <!-- Faint guide track + rotating sweep beam, shown with the ring -->
+      <div id="guide-ring" hidden><div id="guide-beam"></div></div>
+
       <!-- Format picker nodes, hidden until a file is dragged over -->
       <div class="node" id="node-0" hidden><span class="node-label"></span></div>
       <div class="node" id="node-1" hidden><span class="node-label"></span></div>
@@ -15,7 +18,7 @@
       <div class="node" id="node-3" hidden><span class="node-label"></span></div>
 
       <!-- Nucleus: the main drop target, always visible -->
-      <div id="nucleus"><span id="status">drop file</span></div>
+      <div id="nucleus"><span id="nucleus-icon" class="nucleus-icon" hidden></span><span id="status">drop file</span></div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
