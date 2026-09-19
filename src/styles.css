@@ -28,9 +28,9 @@ body {
   width: 92px;
   height: 92px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #185fa5 0%, #378add 100%);
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
   border: 2px solid #0c447c;
-  box-shadow: 0 4px 12px rgba(24, 95, 165, 0.3);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -42,14 +42,14 @@ body {
 }
 
 #nucleus.active {
-  background: linear-gradient(135deg, #185fa5 0%, #378add 100%);
-  box-shadow: 0 4px 12px rgba(24, 95, 165, 0.3);
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
 }
 
 /* Drag-over: soft blurred glow pulse to signal an active drop target. */
 #nucleus.dragover {
-  box-shadow: 0 0 0 4px rgba(55, 138, 221, 0.35),
-    0 0 24px 6px rgba(55, 138, 221, 0.45), 0 4px 12px rgba(24, 95, 165, 0.3);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.35),
+    0 0 24px 6px rgba(59, 130, 246, 0.45), 0 4px 12px rgba(29, 78, 216, 0.3);
   animation: nucleus-pulse 1.2s ease-in-out infinite;
 }
 
@@ -65,7 +65,7 @@ body {
 
 /* Decision point: darker navy circle while the format ring is up. */
 #nucleus.deciding {
-  background: linear-gradient(135deg, #0c447c 0%, #185fa5 100%);
+  background: linear-gradient(135deg, #0c447c 0%, #1d4ed8 100%);
   border-color: #082f57;
   box-shadow: 0 4px 12px rgba(12, 68, 124, 0.45);
 }
@@ -135,7 +135,7 @@ body {
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  border: 1.5px solid rgba(55, 138, 221, 0.25);
+  border: 1.5px solid rgba(59, 130, 246, 0.25);
   box-sizing: border-box;
   pointer-events: none;
   opacity: 0;
@@ -156,10 +156,10 @@ body {
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    #378add 0deg,
-    rgba(55, 138, 221, 0) 35deg,
-    rgba(55, 138, 221, 0) 325deg,
-    #378add 360deg
+    #3b82f6 0deg,
+    rgba(59, 130, 246, 0) 35deg,
+    rgba(59, 130, 246, 0) 325deg,
+    #3b82f6 360deg
   );
   -webkit-mask: radial-gradient(
     farthest-side,
@@ -171,7 +171,7 @@ body {
     transparent calc(100% - 5px),
     #000 calc(100% - 4px)
   );
-  filter: drop-shadow(0 0 6px rgba(55, 138, 221, 0.9));
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.9));
   opacity: 0;
   transform: rotate(var(--beam-angle, 0deg));
   transition: transform 200ms cubic-bezier(0.2, 0.8, 0.3, 1),
@@ -189,9 +189,9 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #185fa5 0%, #378add 100%);
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
   border: 1.5px solid #0c447c;
-  box-shadow: 0 2px 8px rgba(24, 95, 165, 0.3);
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.3);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -226,8 +226,8 @@ body {
 
 .node.highlight {
   transform: scale(1.12);
-  box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.4),
-    0 2px 10px rgba(24, 95, 165, 0.45);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4),
+    0 2px 10px rgba(29, 78, 216, 0.45);
 }
 
 /* The `hidden` attribute must win over `.node`'s `display: flex` above —
