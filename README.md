@@ -109,3 +109,15 @@ Support and feature requests live on
 failures, include the message shown on the widget plus the full technical
 error from the nucleus hover tooltip — that is what the issue template asks
 for.
+
+## Licensing
+
+Catalyst source is publicly viewable, but Catalyst is proprietary
+software — it is not licensed under an open-source license.
+
+- `LICENSE` — proprietary source license (copyright Arjun Sasi).
+- `EULA.md` — draft end-user agreement for official Windows releases,
+  which may be sold. No commercial distribution has launched yet.
+- `THIRD-PARTY-NOTICES.md` — licenses for bundled and build-time
+  third-party software (notably the GPLv3-licensed FFmpeg sidecar), which
+  remain under their own licenses.

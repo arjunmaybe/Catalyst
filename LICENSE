@@ -1,0 +1,88 @@
+CATALYST PROPRIETARY SOURCE LICENSE
+
+Copyright (c) 2026 Arjun Sasi. All rights reserved.
+
+This license governs the Catalyst source code and associated project
+materials in this repository (the "Software"), to the extent that material
+is owned by the copyright holder. It does not cover third-party software,
+which remains under its own licenses (see THIRD-PARTY-NOTICES.md).
+
+Catalyst is proprietary software. It is not licensed under an
+open-source license, and nothing in this repository grants open-source
+rights.
+
+1. PERMITTED USE OF THE SOURCE
+
+   Subject to the restrictions below, the copyright holder grants you a
+   personal, non-exclusive, non-transferable, revocable permission to:
+
+   (a) view and read the source code in this repository; and
+   (b) use the repository's issue tracker to report bugs and request
+       features.
+
+2. RESTRICTIONS
+
+   Except as expressly permitted in Section 1, or with the prior written
+   permission of the copyright holder, you may not:
+
+   (a) use, execute, or build the Software, in whole or in part;
+   (b) copy, reproduce, or republish the Software;
+   (c) modify, adapt, translate, or create derivative works of the Software;
+   (d) redistribute, sublicense, rent, lease, lend, or otherwise distribute
+       the Software;
+   (e) use the Software, or any part of it, in or to develop a competing
+       product or service; or
+   (f) remove or alter any copyright, attribution, or license notices.
+
+3. OFFICIAL RELEASES
+
+   Official Catalyst application releases, including paid Windows builds,
+   are governed by the separate end-user agreement accompanying the
+   release (see EULA.md), not by this source license. Purchase or use of
+   an official release grants no rights in the source code beyond this
+   license.
+
+4. THIRD-PARTY SOFTWARE
+
+   This license covers only material owned by the copyright holder. It
+   grants no rights in, and imposes no additional restrictions on,
+   third-party libraries, tools, binaries, fonts, or other components,
+   which are subject to their respective licenses as documented in
+   THIRD-PARTY-NOTICES.md.
+
+5. OWNERSHIP
+
+   The Software is licensed, not sold. The copyright holder retains all
+   right, title, and interest in and to the Software, including all
+   intellectual property rights.
+
+6. NO WARRANTY
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+   NONINFRINGEMENT. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF
+   THE SOFTWARE IS WITH YOU.
+
+7. LIMITATION OF LIABILITY
+
+   TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL
+   THE COPYRIGHT HOLDER BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+   CONSEQUENTIAL, OR PUNITIVE DAMAGES, OR ANY LOSS OF PROFITS, DATA, OR
+   USE, ARISING OUT OF OR IN CONNECTION WITH THE SOFTWARE, EVEN IF ADVISED
+   OF THE POSSIBILITY OF SUCH DAMAGES.
+
+8. TERMINATION
+
+   This license terminates automatically if you breach any of its terms.
+   Upon termination you must cease all use of the Software and destroy all
+   copies in your possession. Sections 5 through 9 survive termination.
+
+9. GENERAL
+
+   This is the entire agreement between you and the copyright holder
+   regarding the source code in this repository. If any provision is held
+   unenforceable, the remaining provisions continue in full effect. This
+   document was prepared without attorney review and is not legal advice;
+   consult qualified counsel before relying on it for commercial
+   decisions.
