@@ -77,6 +77,7 @@ const statusEl = document.getElementById("status") as HTMLSpanElement;
 const nucleusIcon = document.getElementById("nucleus-icon") as HTMLSpanElement;
 const guideRing = document.getElementById("guide-ring") as HTMLDivElement;
 const guideBeam = document.getElementById("guide-beam") as HTMLDivElement;
+const progressRing = document.getElementById("progress-ring") as HTMLDivElement;
 const nodeEls: HTMLDivElement[] = [0, 1, 2, 3].map(
   (i) => document.getElementById(`node-${i}`) as HTMLDivElement,
 );
@@ -135,15 +136,66 @@ function setBeamTarget(index: number): void {
 }
 
 function clearNucleusVisuals(): void {
-  nucleus.classList.remove("active", "deciding", "dragover", "success");
+  nucleus.classList.remove(
+    "active",
+    "deciding",
+    "dragover",
+    "success",
+    "converting",
+    "neutral",
+  );
+  clearProgress();
   setNucleusIcon(null);
+}
+
+/// Determinate 0..1 progress around the nucleus (media conversions).
+/// `null` switches to the indeterminate sweep (fast image conversions).
+function setProgress(p: number | null): void {
+  progressRing.hidden = false;
+  if (p === null) {
+    progressRing.classList.add("indeterminate");
+    progressRing.style.removeProperty("--p");
+  } else {
+    progressRing.classList.remove("indeterminate");
+    const clamped = Math.min(1, Math.max(0, p));
+    progressRing.style.setProperty("--p", clamped.toFixed(4));
+  }
+}
+
+function clearProgress(): void {
+  progressRing.hidden = true;
+  progressRing.classList.remove("indeterminate");
+  progressRing.style.removeProperty("--p");
 }
 
 function showSuccess(text: string): void {
   setStatus(text);
-  nucleus.classList.remove("deciding", "dragover", "error");
+  nucleus.classList.remove(
+    "deciding",
+    "dragover",
+    "error",
+    "converting",
+    "neutral",
+  );
+  clearProgress();
   nucleus.classList.add("success");
   setNucleusIcon("check");
+}
+
+/// Non-result states (unsupported drop, no pick, skipped batch): slate
+/// nucleus so "nothing converted" reads differently from success/error.
+function showNeutral(text: string): void {
+  setStatus(text);
+  nucleus.classList.remove(
+    "deciding",
+    "dragover",
+    "success",
+    "error",
+    "converting",
+  );
+  clearProgress();
+  nucleus.classList.add("neutral");
+  setNucleusIcon(null);
 }
 
 for (let i = 0; i < nodeEls.length; i++) {
@@ -160,6 +212,11 @@ function setStatus(text: string, tooltip?: string): void {
   const isError = tooltip !== undefined && tooltip !== "";
   statusEl.classList.toggle("error", isError);
   nucleus.classList.toggle("error", isError);
+  if (isError) {
+    // Errors own the nucleus: drop any neutral/converting presentation.
+    nucleus.classList.remove("neutral", "converting");
+    clearProgress();
+  }
 }
 
 // Extract a readable message from a Tauri `invoke` rejection. Backend
@@ -242,7 +299,7 @@ function showTargets(candidates: string[], category: Category | null = null): vo
     }
   }
   nucleus.classList.add("active", "deciding", "dragover");
-  nucleus.classList.remove("success");
+  nucleus.classList.remove("success", "neutral");
   setNucleusIcon(category);
   // Guide track + sweep: unhide, force layout so the fade runs, then show.
   // Beam stays off until the first highlight (highlightedIndex is -1 here);
@@ -317,13 +374,21 @@ async function convertOne(
 ): Promise<string> {
   if (category === "image") {
     setStatus(`${labelPrefix}...`);
+    nucleus.classList.add("converting");
+    // Images convert too fast for meaningful %: indeterminate sweep.
+    setProgress(null);
     // Tauri v2 maps camelCase JS keys -> snake_case Rust params, so
     // `targetExt` here binds to `target_ext` in `convert_image`.
     return await invoke<string>("convert_image", { path, targetExt });
   }
   const channel = new Channel<number>();
-  channel.onmessage = (p) => setStatus(`${labelPrefix}... ${Math.round(p * 100)}%`);
+  channel.onmessage = (p) => {
+    setProgress(p);
+    setStatus(`${labelPrefix}... ${Math.round(p * 100)}%`);
+  };
   setStatus(`${labelPrefix}... 0%`);
+  nucleus.classList.add("converting");
+  setProgress(0);
   return await invoke<string>("convert_media", {
     path,
     targetExt,
@@ -335,7 +400,7 @@ async function convertDrop(paths: string[], targetExt: string): Promise<void> {
   // Simplified v1: only files matching the first file's category convert.
   const firstCat = categoryOf(extOf(paths[0]));
   if (firstCat === null) {
-    setStatus("unsupported");
+    showNeutral("unsupported");
     scheduleReset();
     return;
   }
@@ -374,7 +439,8 @@ async function convertDrop(paths: string[], targetExt: string): Promise<void> {
     isConverting = false;
   }
 
-  nucleus.classList.remove("active");
+  nucleus.classList.remove("active", "converting");
+  clearProgress();
   // Surface the backend error in the widget status so failures are visible
   // without devtools. Friendly label on the nucleus; full message stays on
   // hover (nucleus.title) + console. Green success shows on any conversion
@@ -397,7 +463,7 @@ async function convertDrop(paths: string[], targetExt: string): Promise<void> {
     setStatus(`error: ${friendlyDisplayError(lastError, lastErrorFile)}`, lastError);
     scheduleReset(ERROR_RESET_DELAY_MS);
   } else {
-    setStatus("skipped");
+    showNeutral("skipped");
     scheduleReset();
   }
 }
@@ -425,7 +491,7 @@ async function setupDragDrop(): Promise<void> {
       if (isConverting || payload.paths.length === 0) return;
       const candidates = candidatesForFirstFile(payload.paths);
       if (candidates === null) {
-        setStatus("unsupported");
+        showNeutral("unsupported");
         return;
       }
       showTargets(candidates, categoryForFirstFile(payload.paths));
@@ -446,14 +512,12 @@ async function setupDragDrop(): Promise<void> {
       const candidates = candidatesForFirstFile(payload.paths);
       hideNodes();
       if (candidates === null) {
-        setStatus("unsupported");
-        clearNucleusVisuals();
+        showNeutral("unsupported");
         scheduleReset();
         return;
       }
       if (picked === null || !candidates.includes(picked)) {
-        setStatus("no format");
-        clearNucleusVisuals();
+        showNeutral("no format");
         scheduleReset();
         return;
       }

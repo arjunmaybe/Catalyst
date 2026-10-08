@@ -1,4 +1,41 @@
-/* Catalyst widget: 260x260 transparent stage, atomic/blue theme. */
+/* Catalyst widget: 260x260 transparent stage.
+ *
+ * Visual language (derived from the product, not a template):
+ * a small always-on-top bench instrument. Flat matte fills so the widget
+ * stays legible over any wallpaper behind the transparent window, one
+ * accent (Royal Blue, shared with the landing page), one shadow family,
+ * one 4pt spacing rhythm, native Windows type. Motion only carries state:
+ * ring fade on decide, beam retarget on pick, halo pulse on active drop,
+ * progress sweep while converting. Nothing decorative.
+ *
+ * Geometry contract (do not change without main.ts + tauri.conf.json):
+ * stage 260x260, nucleus 92px at (84,84), nodes 44px on a r=90 ring,
+ * progress track 100px at (80,80). Timings: 180ms fades, 200ms beam.
+ */
+
+:root {
+  /* Palette: single accent + functional states, all flat fills. */
+  --accent: #1d4ed8; /* nucleus idle, picked node, links to landing brand */
+  --accent-deep: #0c447c; /* deciding: dark navy, "holding a decision" */
+  --accent-border: #0b2f66; /* hairline edge for the blue fills */
+  --success: #15803d;
+  --success-border: #14532d;
+  --error: #a53232;
+  --error-border: #7c1f1f;
+  --neutral: #475569; /* non-results: skipped / unsupported / no pick */
+  --neutral-border: #334155;
+  --paper: #ffffff; /* unpicked format nodes */
+  --ink-on-fill: #eef4ff; /* label text on blue/green/brick/slate */
+  --track: rgba(29, 78, 216, 0.32); /* guide ring over wallpaper */
+  --halo: rgba(147, 197, 253, 0.9); /* progress arc + focus */
+  --shadow: 0 4px 16px rgba(15, 23, 42, 0.35); /* the one shadow, nucleus */
+  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.3); /* the one shadow, nodes */
+
+  /* Type ramp: native stack (offline, Windows-first), two sizes only. */
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --status-size: 11px;
+  --node-size: 10px;
+}
 
 html,
 body {
@@ -8,7 +45,7 @@ body {
   height: 260px;
   overflow: hidden;
   background: transparent;
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: var(--font);
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
@@ -20,7 +57,7 @@ body {
   height: 260px;
 }
 
-/* Nucleus: 92px circle centered at (130, 130). */
+/* Nucleus: 92px circle centered at (130, 130). Flat matte fill. */
 #nucleus {
   position: absolute;
   left: 84px;
@@ -28,28 +65,34 @@ body {
   width: 92px;
   height: 92px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-  border: 2px solid #0c447c;
-  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+  background: var(--accent);
+  border: 2px solid var(--accent-border);
+  box-shadow: var(--shadow);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
-  transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease,
-    border-color 180ms ease;
+  gap: 4px;
+  transition: background-color 180ms ease, box-shadow 180ms ease,
+    transform 180ms ease, border-color 180ms ease;
+}
+
+/* Keyboard: the nucleus is focusable so screen-reader and keyboard users
+   can land on the widget and hear its live status. Halo, not a restyle. */
+#nucleus:focus-visible {
+  outline: 3px solid var(--halo);
+  outline-offset: 2px;
 }
 
 #nucleus.active {
-  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+  background: var(--accent);
 }
 
-/* Drag-over: soft blurred glow pulse to signal an active drop target. */
+/* Drag-over: single halo + gentle pulse. Means "release here decides". */
 #nucleus.dragover {
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.35),
-    0 0 24px 6px rgba(59, 130, 246, 0.45), 0 4px 12px rgba(29, 78, 216, 0.3);
+  box-shadow: var(--shadow), 0 0 0 4px rgba(59, 130, 246, 0.35),
+    0 0 20px 4px rgba(59, 130, 246, 0.35);
   animation: nucleus-pulse 1.2s ease-in-out infinite;
 }
 
@@ -63,42 +106,54 @@ body {
   }
 }
 
-/* Decision point: darker navy circle while the format ring is up. */
+/* Decision point: deep navy while the format ring is up. */
 #nucleus.deciding {
-  background: linear-gradient(135deg, #0c447c 0%, #1d4ed8 100%);
+  background: var(--accent-deep);
   border-color: #082f57;
-  box-shadow: 0 4px 12px rgba(12, 68, 124, 0.45);
 }
 
-/* Success: green check, auto-cleared by the existing reset timer. */
+/* Converting: accent fill; progress is carried by #progress-ring. */
+#nucleus.converting {
+  background: var(--accent);
+  border-color: var(--accent-border);
+}
+
+/* Success: flat green + check, auto-cleared by the reset timer. */
 #nucleus.success {
-  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
-  border-color: #14532d;
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+  background: var(--success);
+  border-color: var(--success-border);
 }
 
 #nucleus.error {
-  background: #a53232;
-  border-color: #7c1f1f;
+  background: var(--error);
+  border-color: var(--error-border);
+}
+
+/* Neutral non-result: skipped / unsupported / no pick. Deliberately not
+   green or brick — nothing converted, nothing broke. */
+#nucleus.neutral {
+  background: var(--neutral);
+  border-color: var(--neutral-border);
 }
 
 #status {
-  color: #e6f1fb;
-  font-size: 12px;
-  font-weight: 700;
+  color: var(--ink-on-fill);
+  font-size: var(--status-size);
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-align: center;
   pointer-events: none;
-  padding: 0 6px;
+  padding: 0 8px;
   overflow: hidden;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Error text is longer than idle labels: shrink + wrap so up to ~4 lines
-   stay legible inside the 92px nucleus. Full message is on hover. */
+/* Error text runs longer than idle labels: smaller, wrapped, up to ~4
+   lines inside the 92px nucleus. Full message stays on hover tooltip. */
 #status.error {
   font-size: 11px;
-  line-height: 1.2;
+  line-height: 1.25;
   font-weight: 500;
   letter-spacing: normal;
   text-transform: none;
@@ -106,14 +161,14 @@ body {
   white-space: normal;
 }
 
-/* Small generic file-type / success icon above the status label. */
+/* Small file-type / success icon above the status label. */
 .nucleus-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 20px;
   height: 20px;
-  color: #e6f1fb;
+  color: var(--ink-on-fill);
   pointer-events: none;
 }
 
@@ -127,7 +182,57 @@ body {
   display: block;
 }
 
-/* Guide ring: faint Ø180 track through the node centers + rotating sweep. */
+/* Progress track: 100px ring around the nucleus, shown while converting.
+   Determinate for media (per-file %), indeterminate sweep for images. */
+#progress-ring {
+  position: absolute;
+  left: 80px;
+  top: 80px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  pointer-events: none;
+  --p: 0;
+  background: conic-gradient(
+    from -90deg,
+    var(--halo) calc(var(--p) * 1turn),
+    rgba(147, 197, 253, 0.18) 0
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 6px),
+    #000 calc(100% - 5px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 6px),
+    #000 calc(100% - 5px)
+  );
+  filter: drop-shadow(0 0 2px rgba(15, 23, 42, 0.5));
+}
+
+#progress-ring[hidden] {
+  display: none;
+}
+
+#progress-ring.indeterminate {
+  background: conic-gradient(
+    from 0deg,
+    var(--halo) 0deg 70deg,
+    transparent 70deg 360deg
+  );
+  animation: ring-spin 1s linear infinite;
+}
+
+@keyframes ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Guide ring: faint track through the node centers + retargeting sweep.
+   The sweep always points at the current pick — orientation, not decor. */
 #guide-ring {
   position: absolute;
   left: 40px;
@@ -135,7 +240,7 @@ body {
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  border: 1.5px solid rgba(59, 130, 246, 0.25);
+  border: 1.5px solid var(--track);
   box-sizing: border-box;
   pointer-events: none;
   opacity: 0;
@@ -171,7 +276,7 @@ body {
     transparent calc(100% - 5px),
     #000 calc(100% - 4px)
   );
-  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.9));
+  filter: drop-shadow(0 0 4px rgba(29, 78, 216, 0.6));
   opacity: 0;
   transform: rotate(var(--beam-angle, 0deg));
   transition: transform 200ms cubic-bezier(0.2, 0.8, 0.3, 1),
@@ -183,15 +288,17 @@ body {
   opacity: 1;
 }
 
-/* Format nodes: 44px circles at ring slots around the nucleus. */
+/* Format nodes: 44px discs at ring slots. Paper-white with accent ink so
+   unpicked options read as a set; the pick fills accent. Inverting from
+   the old all-blue ring is what makes the current choice glanceable. */
 .node {
   position: absolute;
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-  border: 1.5px solid #0c447c;
-  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.3);
+  background: var(--paper);
+  border: 1.5px solid var(--accent);
+  box-shadow: var(--shadow-sm);
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -226,8 +333,13 @@ body {
 
 .node.highlight {
   transform: scale(1.12);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4),
-    0 2px 10px rgba(29, 78, 216, 0.45);
+  background: var(--accent);
+  border-color: var(--accent-border);
+  box-shadow: var(--shadow-sm), 0 0 0 3px rgba(59, 130, 246, 0.4);
+}
+
+.node.highlight .node-label {
+  color: var(--ink-on-fill);
 }
 
 /* The `hidden` attribute must win over `.node`'s `display: flex` above —
@@ -238,8 +350,8 @@ body {
 }
 
 .node-label {
-  color: #e6f1fb;
-  font-size: 10px;
+  color: var(--accent);
+  font-size: var(--node-size);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -253,6 +365,10 @@ body {
 
   #guide-beam {
     display: none;
+    animation: none;
+  }
+
+  #progress-ring.indeterminate {
     animation: none;
   }
 

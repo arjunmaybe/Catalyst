@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Catalyst is a tiny floating desktop widget. Drop a file onto the nucleus, pick a format from the ring, and the converted file lands next to the original."
+    />
+    <meta name="theme-color" content="#1d4ed8" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%231d4ed8'/%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%230b2f66' stroke-width='2'/%3E%3C/svg%3E"
+    />
     <title>Catalyst</title>
     <link rel="stylesheet" href="/src/styles.css" />
   </head>
@@ -12,13 +21,20 @@
       <div id="guide-ring" hidden><div id="guide-beam"></div></div>
 
       <!-- Format picker nodes, hidden until a file is dragged over -->
-      <div class="node" id="node-0" hidden><span class="node-label"></span></div>
-      <div class="node" id="node-1" hidden><span class="node-label"></span></div>
-      <div class="node" id="node-2" hidden><span class="node-label"></span></div>
-      <div class="node" id="node-3" hidden><span class="node-label"></span></div>
+      <div class="node" id="node-0" hidden aria-hidden="true"><span class="node-label"></span></div>
+      <div class="node" id="node-1" hidden aria-hidden="true"><span class="node-label"></span></div>
+      <div class="node" id="node-2" hidden aria-hidden="true"><span class="node-label"></span></div>
+      <div class="node" id="node-3" hidden aria-hidden="true"><span class="node-label"></span></div>
+
+      <!-- Progress track, shown while converting (determinate or sweep) -->
+      <div id="progress-ring" hidden aria-hidden="true"></div>
 
       <!-- Nucleus: the main drop target, always visible -->
-      <div id="nucleus"><span id="nucleus-icon" class="nucleus-icon" hidden></span><span id="status">drop file</span></div>
+      <div
+        id="nucleus"
+        tabindex="0"
+        aria-label="Catalyst. Drag a file onto this widget and drop it on a highlighted format to convert."
+      ><span id="nucleus-icon" class="nucleus-icon" hidden></span><span id="status" role="status" aria-live="polite">drop file</span></div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
