@@ -30,6 +30,13 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      # `tauri::generate_context!()` validates `build.frontendDist`
+      # ("../dist") at compile time, so the real Vite production build must
+      # run before any `cargo` compilation on a fresh runner. This does not
+      # touch FFmpeg: Rust tests below still run with CATALYST_SKIP_FFMPEG=1.
+      - name: Build frontend
+        run: npm run build
+
       - name: Check versions in sync
         run: powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-versions.ps1
 

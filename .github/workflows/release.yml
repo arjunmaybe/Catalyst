@@ -47,6 +47,14 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      # Same fresh-runner ordering as ci.yml: `cargo test` compiles the
+      # Tauri crate, and `generate_context!()` requires `dist/` to exist.
+      # The Tauri Action rebuilds via `beforeBuildCommand` later anyway.
+      # FFmpeg requirement is unchanged: tests below skip the sidecar, the
+      # release build itself still downloads/validates the pinned binary.
+      - name: Build frontend
+        run: npm run build
+
       - name: Check versions in sync
         run: powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-versions.ps1
 
