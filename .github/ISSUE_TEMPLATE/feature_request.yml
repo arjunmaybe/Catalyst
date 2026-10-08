@@ -1,0 +1,18 @@
+name: Feature request
+description: Ask for a format, behavior, or widget improvement
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What do you want?
+      description: Concrete behavior, e.g. which formats in and out, or what the widget should do differently
+      placeholder: Convert .tiff to .webp from the ring
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why?
+      description: The situation where the current behavior falls short
+    validations:
+      required: false

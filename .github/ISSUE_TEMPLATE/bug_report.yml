@@ -1,0 +1,39 @@
+name: Bug report
+description: A conversion failed or produced the wrong result
+body:
+  - type: input
+    id: source-format
+    attributes:
+      label: Source file format
+      description: The extension of the file you dropped, e.g. .mov
+    validations:
+      required: true
+  - type: input
+    id: target
+    attributes:
+      label: Target you picked
+      description: The ring node you released over, e.g. MP4
+    validations:
+      required: true
+  - type: input
+    id: widget-message
+    attributes:
+      label: What the widget showed
+      description: The short message on the nucleus, e.g. "unsupported JPEG variant"
+    validations:
+      required: true
+  - type: textarea
+    id: technical-error
+    attributes:
+      label: Full technical error
+      description: Hover the nucleus to reveal the tooltip and paste its contents here. This is what actually diagnoses the failure.
+      render: text
+    validations:
+      required: false
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Windows version and app version, e.g. Windows 11, Catalyst 0.1.0
+    validations:
+      required: true

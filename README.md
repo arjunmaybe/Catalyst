@@ -1,6 +1,9 @@
-# Catalyst (Tauri v2 rewrite)
+# Catalyst
 
-A floating always-on-top "nucleus" widget you drag files onto to convert them.
+A floating file converter for Windows. A small disc sits on your desktop:
+drag a file onto it, release over a format in the ring, and the converted
+copy lands next to the original. Everything runs locally; nothing uploads.
+
 Vanilla TypeScript frontend (Vite) + Rust backend, packaged with Tauri v2.
 
 ## What it does
@@ -59,10 +62,50 @@ $env:CATALYST_SKIP_FFMPEG = "1"
 npx tauri build
 ```
 
-## Layout
+## Tests
 
-- `src/` — Vanilla TS frontend (widget UI, drag-drop, progress)
-- `src-tauri/` — Rust backend (conversion commands, tray, position store)
-- `tools/fetch-ffmpeg.ps1` — build-time ffmpeg sidecar download
+```powershell
+npx tsc --noEmit
+cargo test --manifest-path src-tauri/Cargo.toml
+```
+
+The Rust tests cover the output-naming rule, ffmpeg duration/progress
+parsing, and an image roundtrip through `convert_image` (PNG → JPG, BMP,
+GIF, PNG, plus a rejected non-image target).
+
+## Website preview
+
+`landing/` is a standalone static site with no build step. Preview it with
+any static server:
+
+```powershell
+npx serve landing
+```
+
+`landing/demo.mp4` is a real screen recording of the widget on Windows, not
+a mockup. The page also embeds a working model of the format ring; its
+source/target data mirrors the matrix in `src/main.ts`.
+
+## Where things live
+
+- `src/main.ts` — widget UI, drag-drop, and the format matrix
+  (`IMAGE_TARGETS` / `VIDEO_TARGETS` / `AUDIO_TARGETS`). The ring only
+  offers targets from the dropped file's category, excluding its own
+  extension; the backend re-validates per command.
+- `src-tauri/src/main.rs` — `convert_image` (`image` crate), `convert_media`
+  (ffmpeg sidecar with progress channel), tray menu, window-position
+  persistence. Unit tests at the bottom of the file.
+- `src-tauri/build.rs` + `tools/fetch-ffmpeg.ps1` — first-build ffmpeg
+  sidecar download (gyan.dev essentials build into gitignored
+  `src-tauri/binaries/`); skipped with `CATALYST_SKIP_FFMPEG=1`.
+- `landing/` — static website (`index.html` + `styles.css` + `demo.mp4`).
 - `wpf-prototype/` — archived WPF/.NET prototype, kept as a behavior
   reference only; not part of the build.
+
+## Support
+
+Support and feature requests live on
+[GitHub Issues](https://github.com/arjunmaybe/Catalyst/issues). For conversion
+failures, include the message shown on the widget plus the full technical
+error from the nucleus hover tooltip — that is what the issue template asks
+for.
