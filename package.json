@@ -7,7 +7,14 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "check": "tsc --noEmit",
+    "check:versions": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-versions.ps1",
+    "ffmpeg:fetch": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/fetch-ffmpeg.ps1 -DestinationExe src-tauri/binaries/ffmpeg-x86_64-pc-windows-msvc.exe",
+    "ffmpeg:verify": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/verify-ffmpeg.ps1",
+    "release:build": "tauri build",
+    "release:hash": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/hash-artifacts.ps1",
+    "release:verify": "npm run check:versions && npm run ffmpeg:verify"
   },
   "dependencies": {
     "@tauri-apps/api": "^2"

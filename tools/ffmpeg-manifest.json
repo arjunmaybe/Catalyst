@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "component": "FFmpeg command-line sidecar (Windows x86_64)",
+  "pinnedVersion": "9.0.2",
+  "variant": "release-essentials",
+  "whyThisBuild": "Latest stable 9.0.x patch on the gyan.dev release branch. Essentials contains all codecs Catalyst needs (H.264/H.265/VP9, MP3/AAC/Opus/Vorbis/FLAC, MP4/MKV/MOV/WebM muxers) without the extra libraries pulled into the full variant. Stay on release builds for distribution; do not use git-master nightlies.",
+  "zipUrl": "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip",
+  "zipVerUrl": "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip.ver",
+  "zipSha256Url": "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip.sha256",
+  "expectedVer": "9.0.2",
+  "zipSha256": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba",
+  "expectedVersionString": "ffmpeg version 9.0.2-essentials_build-www.gyan.dev",
+  "upstream": {
+    "buildsPage": "https://www.gyan.dev/ffmpeg/builds/",
+    "releaseDate": "2026-09-19",
+    "sourceCommit": "https://github.com/FFmpeg/FFmpeg/commit/946fcce07b",
+    "sources": [
+      "https://ffmpeg.org/download.html",
+      "https://www.gyan.dev/ffmpeg/builds/"
+    ]
+  },
+  "license": {
+    "spdx": "GPL-3.0-or-later",
+    "reportedByBinary": "ffmpeg -L reports GPLv3-or-later; ffmpeg -version reports --enable-gpl --enable-version3",
+    "licenseTextInRepo": "../licenses/GPL-3.0-or-later.txt",
+    "noticeFileInRepo": "../THIRD-PARTY-NOTICES.md"
+  },
+  "howToUpdate": "See docs/RELEASING.md (FFmpeg pin update). Never change zipUrl without updating zipSha256 + expectedVer + THIRD-PARTY-NOTICES.md in the same commit.",
+  "previousPin": {
+    "version": "9.0.1",
+    "note": "Build shipped during development (ffmpeg 9.0.1-essentials_build-www.gyan.dev, gcc 16.1.0). Superseded by 9.0.2 for the first public Windows beta."
+  }
+}

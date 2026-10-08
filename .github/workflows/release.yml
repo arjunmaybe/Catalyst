@@ -1,0 +1,107 @@
+# First public Windows beta: build the NSIS installer + FFmpeg sidecar on
+# windows-latest and attach it to a GitHub Release draft.
+#
+# Based on the official Tauri v2 GitHub pipeline:
+#   https://tauri.app/distribute/pipelines/github/
+# Uses tauri-apps/tauri-action@v1 to run `tauri build` and create the release.
+#
+# Trigger: push a tag like v0.1.0-beta.1 (see docs/RELEASING.md), or run
+# manually from the Actions tab (workflow_dispatch).
+#
+# Signing: unsigned by default. The beta will show a Windows SmartScreen
+# warning until a certificate is configured (see docs/SIGNING.md). When the
+# WINDOWS_CERTIFICATE + WINDOWS_CERTIFICATE_PASSWORD secrets are present,
+# the workflow imports the PFX into the runner cert store so Tauri's
+# certificateThumbprint/digestAlgorithm/timestampUrl config can sign the build.
+name: release
+
+on:
+  push:
+    tags:
+      - v*
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish-windows-beta:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Check versions in sync
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-versions.ps1
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Rust tests
+        env:
+          CATALYST_SKIP_FFMPEG: "1"
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+
+      # Optional code signing (no-op unless the secrets below are set).
+      # See docs/SIGNING.md. Do NOT commit certificates; only secret names
+      # live here. For the unsigned beta this step is skipped automatically.
+      - name: Import Windows code-signing certificate (if configured)
+        if: ${{ env.WINDOWS_CERTIFICATE != '' }}
+        env:
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        run: |
+          New-Item -ItemType directory -Path certificate | Out-Null
+          Set-Content -Path certificate/tempCert.txt -Value $env:WINDOWS_CERTIFICATE
+          certutil -decode certificate/tempCert.txt certificate/certificate.pfx
+          Remove-Item -Path certificate/tempCert.txt
+          Import-PfxCertificate -FilePath certificate/certificate.pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -Force -AsPlainText)
+
+      - name: Build + draft GitHub release (Tauri Action)
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: Catalyst ${{ github.ref_name }} (Windows beta)
+          releaseBody: |
+            Windows beta (unsigned unless signing is configured — expect a SmartScreen warning; see docs/SIGNING.md).
+
+            FFmpeg sidecar: pinned release-essentials 9.0.2, SHA256 60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba.
+            Sources: https://ffmpeg.org/download.html · https://www.gyan.dev/ffmpeg/builds/ · https://github.com/FFmpeg/FFmpeg/commit/946fcce07b
+            License: Catalyst EULA + GPL-3.0-or-later for the FFmpeg sidecar (see THIRD-PARTY-NOTICES.md in the bundle resources).
+
+            Maintainer: verify the draft, attach *.sha256 checksums, then publish. Full steps: docs/RELEASING.md + docs/BETA-CHECKLIST.md.
+          releaseDraft: true
+          prerelease: true
+
+      - name: SHA256 release artifacts
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools/hash-artifacts.ps1
+
+      - name: Upload checksums (workflow artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-beta-sha256
+          path: src-tauri/target/release/bundle/**/*.sha256
+
+      - name: Upload FFmpeg audit file (workflow artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-audit
+          path: src-tauri/binaries/*.version.json

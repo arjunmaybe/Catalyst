@@ -39,7 +39,7 @@ Vanilla TypeScript frontend (Vite) + Rust backend, packaged with Tauri v2.
 
 - Windows 10/11
 - [Node.js 20+](https://nodejs.org/) and [Rust stable](https://rustup.rs/)
-- Internet on first build (ffmpeg sidecar auto-download, cached afterwards)
+- Internet on first build (pinned ffmpeg sidecar auto-download, cached afterwards; see `tools/ffmpeg-manifest.json`)
 
 ## Running it
 
@@ -61,6 +61,15 @@ ffmpeg on PATH):
 $env:CATALYST_SKIP_FFMPEG = "1"
 npx tauri build
 ```
+
+Verify the cached sidecar against the pin without downloading:
+
+```powershell
+npm run ffmpeg:verify
+```
+
+Release builds, versioning, signing, and the beta checklist live in
+`docs/RELEASING.md`, `docs/SIGNING.md`, and `docs/BETA-CHECKLIST.md`.
 
 ## Tests
 
@@ -95,9 +104,7 @@ source/target data mirrors the matrix in `src/main.ts`.
 - `src-tauri/src/main.rs` — `convert_image` (`image` crate), `convert_media`
   (ffmpeg sidecar with progress channel), tray menu, window-position
   persistence. Unit tests at the bottom of the file.
-- `src-tauri/build.rs` + `tools/fetch-ffmpeg.ps1` — first-build ffmpeg
-  sidecar download (gyan.dev essentials build into gitignored
-  `src-tauri/binaries/`); skipped with `CATALYST_SKIP_FFMPEG=1`.
+- `src-tauri/build.rs` + `tools/fetch-ffmpeg.ps1` + `tools/ffmpeg-manifest.json` — pinned, checksum-verified ffmpeg sidecar download (gyan.dev essentials build into gitignored `src-tauri/binaries/`); skipped with `CATALYST_SKIP_FFMPEG=1`. Verify with `npm run ffmpeg:verify`.
 - `landing/` — static website (`index.html` + `styles.css` + `demo.mp4`).
 - `wpf-prototype/` — archived WPF/.NET prototype, kept as a behavior
   reference only; not part of the build.

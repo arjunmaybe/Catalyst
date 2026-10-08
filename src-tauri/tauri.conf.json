@@ -38,6 +38,13 @@
     "active": true,
     "targets": "nsis",
     "publisher": "Arjun Sasi",
+    "category": "Utility",
+    "shortDescription": "Floating file converter for Windows.",
+    "longDescription": "Catalyst is a floating file converter for Windows. Drag a file onto the widget and drop it on a format node; the converted copy lands next to the original. All conversion runs locally.",
+    "copyright": "Copyright (c) 2026 Arjun Sasi. All rights reserved.",
+    "homepage": "https://github.com/arjunmaybe/Catalyst",
+    "license": "Proprietary — see EULA.md. FFmpeg sidecar remains under GPL-3.0-or-later, see THIRD-PARTY-NOTICES.md.",
+    "licenseFile": "../EULA.md",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -45,6 +52,21 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "externalBin": ["binaries/ffmpeg"]
+    "resources": [
+      "../THIRD-PARTY-NOTICES.md",
+      "../EULA.md",
+      "../licenses/GPL-3.0-or-later.txt"
+    ],
+    "externalBin": ["binaries/ffmpeg"],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": null,
+      "timestampUrl": null,
+      "signCommand": null,
+      "webviewInstallMode": {
+        "silent": true,
+        "type": "downloadBootstrapper"
+      }
+    }
   }
 }

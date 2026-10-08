@@ -1,0 +1,46 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ./src-tauri -> target
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Check versions in sync
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools/check-versions.ps1
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Rust tests (offline ffmpeg skip)
+        env:
+          CATALYST_SKIP_FFMPEG: "1"
+        run: cargo test --manifest-path src-tauri/Cargo.toml
+
+      - name: Validate FFmpeg manifest
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -Command "$m = Get-Content tools/ffmpeg-manifest.json -Raw | ConvertFrom-Json; if (-not $m.zipSha256 -or $m.zipSha256.Length -ne 64) { throw 'ffmpeg-manifest.json zipSha256 must be a 64-char hex string' }; if (-not $m.expectedVersionString) { throw 'ffmpeg-manifest.json missing expectedVersionString' }; Write-Host ('FFmpeg pin OK: ' + $m.pinnedVersion)"

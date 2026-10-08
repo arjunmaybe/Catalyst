@@ -22,38 +22,80 @@ Conventions used below:
   separate sidecar process for video/audio conversion
   (`convert_media` in `src-tauri/src/main.rs` spawns it; it is not linked
   into Catalyst code).
-- **Build used:** `ffmpeg 9.0.1-essentials_build-www.gyan.dev`, built with
-  gcc 16.1.0, downloaded at first build time by `src-tauri/build.rs` via
-  `tools/fetch-ffmpeg.ps1` from
-  `https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip` and
-  packaged through `externalBin: ["binaries/ffmpeg"]` in
-  `src-tauri/tauri.conf.json`.
-- **How it enters the project:** downloaded during the build; the
-  `src-tauri/binaries/` directory is gitignored, so the binary is not
-  stored in this repository. It becomes part of official release bundles
-  at packaging time.
-- **Applicable license: GNU General Public License v3 (GPLv3).** The
-  binary reports `--enable-gpl --enable-version3` in its build
-  configuration (verified by running the bundled binary with `-version`),
-  and the publisher of the gyan.dev builds licenses them under the GPL.
-  This determination comes from the binary itself, not from an assumption.
-- **What GPLv3 requires when distributing this binary:**
-  1. Preserve FFmpeg copyright notices.
-  2. Include a copy of the GPLv3 license text with the distribution.
-  3. Make the Corresponding Source for the exact binary available as
-     GPLv3 Section 6 requires (source offer / documented source location).
+- **Build used (pinned for the first public Windows beta):**
+  `ffmpeg 9.0.2-essentials_build-www.gyan.dev` (gyan.dev release build,
+  dated 2026-09-19; upstream FFmpeg 9.0.2 "Lei", released 2026-09-18;
+  built with gcc 16.2.0, libraries 61.1.102/63.1.102/12.1.102).
+  - Pin file: `tools/ffmpeg-manifest.json` (`pinnedVersion: "9.0.2"`,
+    `expectedVersionString:
+    "ffmpeg version 9.0.2-essentials_build-www.gyan.dev"`).
+  - Download URL (pinned):
+    `https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip`
+  - Zip SHA256 (pinned, from
+    `https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip.sha256`):
+    `60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba`
+  - Upstream source commit for this release (per gyan.dev builds page):
+    `https://github.com/FFmpeg/FFmpeg/commit/946fcce07b`
+  - Previous development pin (superseded): `ffmpeg
+    9.0.1-essentials_build-www.gyan.dev`. Do not ship 9.0.1 in the beta;
+    the fetch script replaces a stale cached exe automatically.
+- **How it enters the project (reproducible):**
+  1. `src-tauri/build.rs` runs before `tauri_build` and calls
+     `tools/fetch-ffmpeg.ps1 -ManifestPath tools/ffmpeg-manifest.json
+     -DestinationExe src-tauri/binaries/ffmpeg-x86_64-pc-windows-msvc.exe`.
+  2. The script downloads the pinned zip, fails the build on any SHA256
+     mismatch, extracts only `ffmpeg.exe`, then fails the build unless
+     `ffmpeg -version` contains the pinned `expectedVersionString`.
+  3. It writes an audit file next to the exe
+     (`ffmpeg-x86_64-pc-windows-msvc.exe.version.json`) recording the
+     `ffmpeg -version` first line, the exe SHA256, the zip URL/hash, and
+     the fetch timestamp.
+  4. `src-tauri/binaries/` stays gitignored, so the binary itself is
+     never committed; it becomes part of official release bundles at
+     packaging time through `externalBin: ["binaries/ffmpeg"]` in
+     `src-tauri/tauri.conf.json`.
+  5. Verify a cached copy without downloading: `npm run ffmpeg:verify`
+     (checks version string, `--enable-gpl --enable-version3`, `ffmpeg -L`
+     GPL notice, and prints the exe SHA256). Force a clean re-fetch:
+     delete `src-tauri/binaries/ffmpeg-*.exe*` and rebuild, or run the
+     fetch script with `-Force`. Offline builds: `CATALYST_SKIP_FFMPEG=1`
+     skips the download (media conversion then needs ffmpeg on PATH).
+- **Applicable license: GNU General Public License v3 or later
+  (SPDX: GPL-3.0-or-later).** The binary reports `--enable-gpl
+  --enable-version3` in its build configuration (verified by running the
+  bundled binary with `-version`), and `ffmpeg -L` prints the GPL
+  redistribution notice ("either version 3 of the License, or (at your
+  option) any later version"). The publisher of the gyan.dev builds
+  licenses them under the GPL. This determination comes from the binary
+  itself, not from an assumption.
+- **What GPLv3 requires when distributing this binary, and how the beta
+  satisfies it:**
+  1. Preserve FFmpeg copyright notices — `ffmpeg -version`/`-L` output
+     is preserved verbatim in the shipped sidecar; do not strip it.
+  2. Include a copy of the GPL license text with the distribution — the
+     verbatim text is vendored at `licenses/GPL-3.0-or-later.txt`
+     (downloaded from `https://www.gnu.org/licenses/gpl-3.0.txt`) and
+     shipped inside the installer via `bundle.resources` in
+     `src-tauri/tauri.conf.json`, alongside this file and `EULA.md`.
+  3. Make the Corresponding Source for the exact shipped binary
+     available as GPLv3 Section 6 requires — Section 6(d) designated
+     place: every GitHub release notes the exact FFmpeg version, zip
+     SHA256, and links `https://ffmpeg.org/download.html`,
+     `https://www.gyan.dev/ffmpeg/builds/`, and the exact source commit
+     above. This file plus the vendored license text ship inside the
+     bundle (`bundle.resources`), so the offer travels with the binary.
 - **Source locations:** FFmpeg upstream sources at
   `https://ffmpeg.org/download.html`; gyan.dev publishes build scripts and
   source references at `https://www.gyan.dev/ffmpeg/builds/`.
-- **Needs verification before commercial distribution:**
-  1. Pin the exact FFmpeg build per release and record its checksum, so
-     the Corresponding Source offer always matches the shipped binary.
-  2. Decide the source-offer mechanism (written offer in the installer
-     vs. a durable download page) and confirm the full GPLv3 text ships
-     inside the paid bundle, not just in this repository.
-  3. Confirm no additional GPL-licensed code is introduced through other
-     means (e.g. a locally built replacement binary would need its own
-     build-configuration audit).
+- **Needs verification before commercial distribution (residual):**
+  1. This pinning/verification/notice pipeline is implemented, but it has
+     not had attorney review. Consult qualified counsel before relying on
+     it for paid distribution, and keep the release-notes source links
+     live for as long as the beta is distributed.
+  2. Confirm no additional GPL-licensed code is introduced through other
+     means (e.g. a locally built replacement binary or a switch from the
+     `essentials` to the `full` variant would need its own
+     build-configuration and library audit before release).
 
 ## Rust crates (compiled into the release binary)
 
