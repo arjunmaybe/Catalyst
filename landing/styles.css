@@ -37,7 +37,7 @@ body {
 }
 
 body {
-  background: var(--paper);
+  background: #faf9f6;
   color: var(--body);
   font-family: var(--sans);
   font-size: 1rem;
@@ -104,8 +104,8 @@ code {
 
 .skip-link {
   position: absolute;
-  left: -9999px;
-  top: 0;
+  left: 0.75rem;
+  top: -3rem;
   z-index: 1000;
   padding: 0.5rem 0.75rem;
   background: var(--ink);
@@ -113,11 +113,14 @@ code {
   font-weight: 600;
   text-decoration: none;
   border-radius: var(--radius);
+  transition: top 0.1s ease;
 }
 
-.skip-link:focus {
-  left: 0.75rem;
+.skip-link:focus,
+.skip-link:focus-visible {
   top: 0.75rem;
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .wrap {
@@ -464,7 +467,7 @@ code {
 .record {
   margin: 2rem 0 0;
   display: grid;
-  grid-template-columns: minmax(200px, 250px) minmax(0, 680px);
+  grid-template-columns: minmax(200px, 250px) minmax(0, 700px);
   gap: 2rem;
   align-items: start;
   justify-content: start;
@@ -515,9 +518,9 @@ code {
 .record-media {
   display: block;
   width: 100%;
+  max-width: 700px;
   height: auto;
-  aspect-ratio: 1.22 / 1;
-  object-fit: cover;
+  object-fit: contain;
   border: 1px solid var(--ink);
   border-radius: var(--radius);
   background: var(--wash);
